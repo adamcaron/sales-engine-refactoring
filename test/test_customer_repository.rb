@@ -2,19 +2,23 @@ require_relative '../lib/sales_engine'
 
 class TestCustomerRepository < Minitest::Test
   def test_it_finds_customers_by_first_name
-    data_directory = File.expand_path 'fixtures', __dir__
+    repo = CustomerRepository.new([
+      { id: 4, first_name: 'Cecilia' },
+      { id: 2, first_name: 'Dmitry' },
+      { id: 9, first_name: 'Cecilia' },
+    ])
 
-    # find_all_by_X(match) works just like find_by_X except it returns a collection of all matches.
-    # If there is no match, it returns an empty Array.
-    engine     = SalesEngine.new(data_directory)
-    engine.startup
-    repo       = engine.customer_repository
-    sylvesters = repo.find_all_by_first_name("Sylvester")
+    # the Cecilias have ids of 4 and 9
+    customers = repo.find_all_by_first_name('Cecilia')
+    assert_equal [4, 9], customers.map { |c| c.id }
 
-    sylvesters.each do |mary|
-      assert_equal "Sylvester", mary.first_name
-    end
+    # the Dmitrys have ids of 2
+    customers = repo.find_all_by_first_name('Dmitry')
+    assert_equal [2], customers.map { |c| c.id }
 
-    assert_equal 2, sylvesters.length
+
+    # the Roberts don't exist
+    customers = repo.find_all_by_first_name('Robert')
+    assert_equal [], customers.map { |c| c.id }
   end
 end

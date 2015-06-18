@@ -5,6 +5,9 @@ class Record
   def initialize(attributes)
     self.attributes = attributes
   end
+  def id
+    attributes[:id]
+  end
 end
 
 
@@ -30,8 +33,8 @@ class Customer < Record
 end
 
 class Repository
-  def initialize(data_file)
-    hashes = CSV.read data_file, headers: true, header_converters: :symbol
+  def initialize(hashes)
+    # hashes = CSV.read data_file, headers: true, header_converters: :symbol
     @all = hashes.map { |hash| record_class.new hash.to_hash }
   end
 end
